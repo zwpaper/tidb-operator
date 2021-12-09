@@ -59,13 +59,9 @@ func (bo *Options) getDestBucketURI(remotePath string) string {
 	return fmt.Sprintf("%s://%s", bo.StorageType, remotePath)
 }
 
-func (bo *Options) dumpTidbClusterData(ctx context.Context, bfPath string, backup *v1alpha1.Backup) error {
-	err := backupUtil.EnsureDirectoryExist(bfPath)
-	if err != nil {
-		return err
-	}
+func (bo *Options) dumpTidbClusterData(ctx context.Context, dest string, backup *v1alpha1.Backup) error {
 	args := []string{
-		fmt.Sprintf("--output=%s", bfPath),
+		fmt.Sprintf("--output=%s", dest),
 		fmt.Sprintf("--host=%s", bo.Host),
 		fmt.Sprintf("--port=%d", bo.Port),
 		fmt.Sprintf("--user=%s", bo.User),

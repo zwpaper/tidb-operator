@@ -1453,6 +1453,9 @@ type BackupSpec struct {
 	CleanPolicy CleanPolicyType `json:"cleanPolicy,omitempty"`
 	// CleanOption controls the behavior of clean.
 	CleanOption *CleanOption `json:"cleanOption,omitempty"`
+	// Compress means whether to compress the backup data,
+	// backup into a `tgz` format if true.
+	Compress bool `json:"compress,omitempty"`
 
 	// PodSecurityContext of the component
 	// +optional

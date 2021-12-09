@@ -16,7 +16,6 @@ package export
 import (
 	"context"
 	"database/sql"
-	"os"
 	"strings"
 	"time"
 
@@ -258,7 +257,14 @@ func (bm *BackupManager) performBackup(ctx context.Context, backup *v1alpha1.Bac
 		return err
 	}
 
-	backupErr := bm.dumpTidbClusterData(ctx, backupFullPath, backup)
+	dumplingPath := backupFullPath
+	if !backup.Spec.Compress {
+		// not compressed backup, using dumpling to backup to remote directly
+		dumplingPath = bucketURI
+	}
+
+	opts := util.GetOptions(backup.Spec.StorageProvider)
+	backupErr := bm.dumpTidbClusterData(ctx, dumplingPath, backup)
 	if oldTikvGCTimeDuration < tikvGCTimeDuration {
 		// use another context to revert `tikv_gc_life_time` back.
 		// `DefaultTerminationGracePeriodSeconds` for a pod is 30, so we use a smaller timeout value here.
@@ -295,7 +301,7 @@ func (bm *BackupManager) performBackup(ctx context.Context, backup *v1alpha1.Bac
 		errs = append(errs, uerr)
 		return errorutils.NewAggregate(errs)
 	}
-	klog.Infof("dump cluster %s data to %s success", bm, backupFullPath)
+	klog.Infof("dump cluster %s data to %s success", bm, bucketURI)
 
 	commitTs, err := util.GetCommitTsFromMetadata(backupFullPath)
 	if err != nil {

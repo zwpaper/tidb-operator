@@ -195,7 +195,11 @@ func ConstructBRGlobalOptionsForBackup(backup *v1alpha1.Backup) ([]string, error
 
 // ConstructDumplingOptionsForBackup constructs dumpling options for backup
 func ConstructDumplingOptionsForBackup(backup *v1alpha1.Backup) []string {
-	var args []string
+	args := []string{
+		// fmt.Sprintf("--s3.endpoint=%s", os.Getenv("S3_ENDPOINT")),
+		// fmt.Sprintf("--s3.region=%s", os.Getenv("AWS_REGION")),
+		// fmt.Sprintf("--s3.storage-class=%s", os.Getenv("AWS_STORAGE_CLASS")),
+	}
 	config := backup.Spec
 
 	if config.TableFilter != nil && len(config.TableFilter) > 0 {

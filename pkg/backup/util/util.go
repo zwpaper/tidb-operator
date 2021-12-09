@@ -81,7 +81,11 @@ func generateS3CertEnvVar(s3 *v1alpha1.S3StorageProvider, useKMS bool) ([]corev1
 			Value: string(s3.Provider),
 		},
 		{
-			Name:  "S3_ENDPOINT",
+			Name:  "S3_ENDPOINT", // S3 endpoint env for rclone
+			Value: s3.Endpoint,
+		},
+		{
+			Name:  "AWS_ENDPOINT", // aws endpoint env for dumpling
 			Value: s3.Endpoint,
 		},
 		{
